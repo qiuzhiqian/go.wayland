@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"zenhack.net/go/wayland"
+	wayland "go.wayland"
 )
 
 func chkfatal(err error) {
