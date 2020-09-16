@@ -8,10 +8,11 @@ import (
 	_ "image/jpeg"
 	_ "image/png"
 	"os"
+	"reflect"
 
 	"github.com/justincormack/go-memfd"
 
-	"zenhack.net/go/wayland"
+	wayland "go.wayland"
 )
 
 var (
@@ -39,6 +40,7 @@ func main() {
 	client, err := wayland.Dial("")
 	chkfatal(err)
 	client.OnGlobal(func(obj wayland.Object) {
+		fmt.Println("client global,", obj, "type:", reflect.TypeOf(obj))
 		switch o := obj.(type) {
 		case *wayland.Shm:
 			shm = o
@@ -70,11 +72,11 @@ func main() {
 		size := bounds.Dx() * bounds.Dy() * 4
 
 		chkfatal(mfd.Truncate(int64(size)))
-		mfdBytes, err := mfd.Map()
+		_, err = mfd.Map()
 		chkfatal(err)
 		pool, err := shm.CreatePool(int(mfd.Fd()), int32(size))
 		chkfatal(err)
-		buf, err := pool.CreateBuffer(
+		_, err = pool.CreateBuffer(
 			0,
 			int32(bounds.Dx()),
 			int32(bounds.Dy()),
